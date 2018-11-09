@@ -1,9 +1,11 @@
 const express = require('express');
+const config = require('config');
+const log = require('./libs/log')(module);
 
 const app = express();
-app.set('port', 3000);
+app.set('port', config.get('port'));
 
-app.listen(app.get('port'), () => console.log(`Example app listening on port ${app.get('port')}!`));
+app.listen(config.get('port'), () => log.info(`Example app listening on port ${config.get('port')}!`));
 
 app.use((req, res, next) => {
   if (req.url === '/') res.end('Hello World!');
