@@ -1,27 +1,36 @@
 const express = require('express');
 const config = require('config');
+const favicon = require('serve-favicon');
+const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+const path = require('path');
+
+// const router = express.Router();
 const log = require('./libs/log')(module);
+
 
 const app = express();
 app.set('port', config.get('port'));
 
-app.listen(config.get('port'), () => log.info(`Example app listening on port ${config.get('port')}!`));
+app.engine('ejs', require('ejs-locals'));
 
-app.use((req, res, next) => {
-  if (req.url === '/') res.end('Hello World!');
-  else next();
+app.set('views', `${__dirname}/templates`);
+app.set('view engine', 'ejs');
+
+app.use(favicon(path.join(__dirname, 'public', 'img', 'favicon.ico')));
+app.use(bodyParser.json());
+app.use(cookieParser());
+
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.get('/', (req, res) => {
+  res.render('index');
 });
 
-app.use((req, res, next) => {
-  if (req.url === '/test') res.end('Test');
-  else next();
+app.get('/login', (req, res) => {
+  res.render('login');
 });
 
-app.use((req, res, next) => {
-  if (req.url === '/forbidden') next(new Error('Access dined'));
-  else next();
-});
-
-app.use((req, res) => {
-  res.end(404, 'Not found');
+app.listen(config.get('port'), () => {
+  log.info(`Example app listening on port ${config.get('port')}!`);
 });

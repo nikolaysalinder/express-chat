@@ -17,9 +17,17 @@
   },
   "homepage": "https://github.com/nikolaysalinder/express-chat#readme",
   "dependencies": {
+    "body-parser": "^1.18.3",
     "config": "^2.0.1",
+    "cookie-parser": "^1.4.3",
     "ejs": "^2.6.1",
+    "ejs-lint": "^0.3.0",
+    "ejs-locals": "^1.0.2",
     "express": "^4.16.4",
+    "jquery": "^3.3.1",
+    "mongodb": "^3.1.9",
+    "mongoose": "^5.3.11",
+    "serve-favicon": "^2.5.0",
     "winston": "^3.1.0"
   },
   "devDependencies": {
