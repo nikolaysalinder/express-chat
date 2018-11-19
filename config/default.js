@@ -3,7 +3,15 @@ module.exports = {
   port: 3000,
   env: 'development',
   db: {
-    user: 'myUserAdmin',
-    password: 'abc123',
+    url: 'mongodb://localhost:27017/chat',
+    options: {
+      useNewUrlParser: true,
+      useCreateIndex: true,
+      authSource: 'admin',
+      auth: {
+        user: 'Kolyan',
+        password: 'abc123',
+      },
+    },
   },
 };

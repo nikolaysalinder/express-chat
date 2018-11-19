@@ -1,25 +1,52 @@
-const mongoose = require('mongoose');
-const config = require('config');
-const { format } = require('util');
+const mongoose = require('./libs/mongoose');
 
-const user = encodeURIComponent(config.get('db.user'));
-const password = encodeURIComponent(config.get('db.password'));
+async function open() {
+  return new Promise((resolve) => {
+    mongoose.connection.on('open', resolve);
+  });
+}
 
-// Connection URL
-const url = format(`mongodb://${user}:${password}@localhost:27017/dbName?authSource=admin`);
+async function dropDatabase() {
+  const db = mongoose.connection;
+  return db.dropDatabase();
+}
 
-mongoose.connect(url, { useNewUrlParser: true });
+function requireModels() {
+  // eslint-disable-next-line
+  require('./models/user');
 
-const db = mongoose.connection;
+  const keys = Object.keys(mongoose.models);
+  const promises = keys.map(key => mongoose.models[key].ensureIndexes());
 
+  return Promise.all(promises);
+}
 
-const Cat = mongoose.model('Cat', { name: String });
+function createUsers() {
+  const users = [
+    { username: 'Vasya', password: 'supervasya' },
+    { username: 'Petya', password: 'superpetya' },
+    { username: 'admin', password: 'superadmin' },
+  ];
 
+  const promises = users.map((userData) => {
+    const user = new mongoose.models.User(userData);
+    return user.save();
+  });
 
-const kitty = new Cat({ name: 'Zildjian', test: 5 });
-console.log(kitty);
-kitty
-  .save()
-  .then(() => console.log('meow'))
-  .then(() => console.log(kitty))
-  .then(() => db.close());
+  return Promise.all(promises);
+}
+
+(async () => {
+  try {
+    await open();
+    await dropDatabase();
+    await requireModels();
+    await createUsers();
+
+    mongoose.disconnect();
+  } catch (err) {
+    console.log(err);
+    mongoose.disconnect();
+    process.exit(err ? 255 : 0);
+  }
+})();
