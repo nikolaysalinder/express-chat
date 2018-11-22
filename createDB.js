@@ -8,7 +8,9 @@ async function open() {
 
 async function dropDatabase() {
   const db = mongoose.connection;
-  return db.dropDatabase();
+  return db.dropDatabase(() => {
+    console.log('dropped');
+  });
 }
 
 function requireModels() {

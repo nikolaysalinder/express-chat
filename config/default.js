@@ -14,4 +14,7 @@ module.exports = {
       },
     },
   },
+  session: {
+    secret: 'My secret',
+  },
 };

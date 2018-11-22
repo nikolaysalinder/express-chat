@@ -1,10 +1,15 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
   <title><%=blocks.title%></title>
-  <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon"> 
+  <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="/vendor/bower_components/bootstrap/dist/css/bootstrap.css"/>
   <link rel="stylesheet" href="/css/app.css"/>
-  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
+
+  <!-- <script src="/vendor/bower_components/jquery/jquery.js"></script> -->
+  <!-- <script src="/vendor/bower_components/bootstrap/dist/js/bootstrap.js"></script> -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Простой сервер чат express" />
 </head>
 <body>
 <header>
@@ -21,5 +26,7 @@
 <footer>
   <%-blocks.footer%>
 </footer>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="./js/app.js" charset="utf-8"></script>
 </body>
 </html>

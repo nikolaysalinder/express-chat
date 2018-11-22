@@ -1,9 +1,11 @@
 module.exports = {
-  "extends": "airbnb-base",
-  rules: {
-    'no-console': 'off',
-    
+  'env': {
+    'browser': true,
   },
-  plugins:
+  'extends': 'airbnb-base',
+  'rules': {
+    'no-console': 'off'
+  },
+  'plugins':
     ['mongodb']
 };

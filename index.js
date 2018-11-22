@@ -5,6 +5,10 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const path = require('path');
 const errorHandler = require('errorhandler');
+const session = require('express-session');
+const MongoStore = require('connect-mongo')(session);
+const mongoose = require('./libs/mongoose');
+
 
 // const router = express.Router();
 // const { User } = require('./models/user');
@@ -23,7 +27,28 @@ app.set('view engine', 'ejs');
 app.use(favicon(path.join(__dirname, 'public', 'img', 'favicon.ico')));
 app.use(bodyParser.json());
 app.use(cookieParser());
+app.use(session({
+  secret: config.get('session.secret'),
+  saveUninitialized: false,
+  resave: false,
+  cookie: {
+    path: '/',
+    httpOnly: true,
+    maxAge: null,
+  },
+  store: new MongoStore({
+    mongooseConnection: mongoose.connection,
+  }),
+}));
+
+// app.use((req, res) => {
+//   req.session.numberOfVisits = req.session.numberOfVisits + 1 || 1;
+//   res.send(`Visits ${req.session.numberOfVisits}`);
+// });
+
 app.use(require('./middleware/sendHttpError'));
+app.use(require('./middleware/loadUser'));
+
 
 require('./routes')(app);
 
@@ -47,7 +72,6 @@ app.use((err, req, res, next) => {
     res.sendHttpError(err);
   }
 });
-app.use(require('./middleware/sendHttpError'));
 
 app.listen(config.get('port'), () => {
   log.info(`Example app listening on port ${config.get('port')}!`);
