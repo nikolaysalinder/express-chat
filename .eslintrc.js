@@ -1,11 +1,14 @@
 module.exports = {
-  'env': {
-    'browser': true,
+  "env": {
+    "es6": true,
+    "browser": true,
+    "node": true,
+    "jquery": true
   },
-  'extends': 'airbnb-base',
-  'rules': {
-    'no-console': 'off'
+  "extends": "airbnb-base",
+  "rules": {
+    "no-console": "off"
   },
-  'plugins':
-    ['mongodb']
+  "plugins":
+    ["mongodb"]
 };

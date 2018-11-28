@@ -1,54 +1,31 @@
 const mongoose = require('./libs/mongoose');
+const log = require('./libs/log')(module);
 
-async function open() {
-  return new Promise((resolve) => {
-    mongoose.connection.on('open', resolve);
-  });
-}
 
-async function dropDatabase() {
-  const db = mongoose.connection;
-  return db.dropDatabase(() => {
-    console.log('dropped');
-  });
-}
+const { conn } = mongoose.connection;
 
-function requireModels() {
-  // eslint-disable-next-line
-  require('./models/user');
+log.info(conn.readyState);
 
-  const keys = Object.keys(mongoose.models);
-  const promises = keys.map(key => mongoose.models[key].ensureIndexes());
+conn.dropDatabase()
+  .then(() => {
+    // eslint-disable-next-line
+    const { User } = require('./models/user');
 
-  return Promise.all(promises);
-}
+    const users = [
+      { username: 'Вася', password: 'supervasya' },
+      { username: 'Петя', password: '123' },
+      { username: 'admin', password: 'thetruehero' },
+    ];
 
-function createUsers() {
-  const users = [
-    { username: 'Vasya', password: 'supervasya' },
-    { username: 'Petya', password: 'superpetya' },
-    { username: 'admin', password: 'superadmin' },
-  ];
-
-  const promises = users.map((userData) => {
-    const user = new mongoose.models.User(userData);
-    return user.save();
-  });
-
-  return Promise.all(promises);
-}
-
-(async () => {
-  try {
-    await open();
-    await dropDatabase();
-    await requireModels();
-    await createUsers();
-
-    mongoose.disconnect();
-  } catch (err) {
-    console.log(err);
-    mongoose.disconnect();
-    process.exit(err ? 255 : 0);
-  }
-})();
+    User.ensureIndexes()
+      .then(() => {
+        User.create(...users, (error, ...users) => {
+          if (error) log.debug(error);
+          log.info(users);
+        })
+          .then(() => mongoose.disconnect())
+          .catch(err => log.debug(err));
+      })
+      .catch(err => log.debug(err));
+  })
+  .catch(err => log.debug(err));

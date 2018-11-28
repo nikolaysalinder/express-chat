@@ -1,3 +1,7 @@
+/* eslint-disable */
+// import io from 'socket.io-client';
+
+
 function logout() {
   axios.post('/logout')
     .then((response) => {

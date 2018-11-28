@@ -6,8 +6,9 @@ const cookieParser = require('cookie-parser');
 const path = require('path');
 const errorHandler = require('errorhandler');
 const session = require('express-session');
-const MongoStore = require('connect-mongo')(session);
-const mongoose = require('./libs/mongoose');
+const http = require('http');
+
+const sessionStore = require('./libs/sessionStore');
 
 
 // const router = express.Router();
@@ -17,6 +18,8 @@ const { HttpError } = require('./error');
 
 
 const app = express();
+const server = http.Server(app);
+
 app.set('port', config.get('port'));
 
 app.engine('ejs', require('ejs-locals'));
@@ -36,9 +39,7 @@ app.use(session({
     httpOnly: true,
     maxAge: null,
   },
-  store: new MongoStore({
-    mongooseConnection: mongoose.connection,
-  }),
+  store: sessionStore,
 }));
 
 // app.use((req, res) => {
@@ -73,6 +74,8 @@ app.use((err, req, res, next) => {
   }
 });
 
-app.listen(config.get('port'), () => {
+server.listen(config.get('port'), () => {
   log.info(`Example app listening on port ${config.get('port')}!`);
 });
+// eslint-disable-next-line
+require('./socket')(server);
